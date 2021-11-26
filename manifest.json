@@ -1,0 +1,21 @@
+{
+  "manifest_version": 2,
+  "name": "tokencv",
+  "version": "1.0.0",
+  "description": "复制浏览器网页的token，便于开发过程中token过期手动复制",
+  "browser_action": {
+    "default_title": "tokencv",
+    "default_popup": "./popup/dist/index.html"
+  },
+  "background": {
+    "scripts": ["./background/index.js"]
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["./content/copy.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "permissions": ["storage"]
+}
