@@ -7,13 +7,13 @@ chrome.runtime.onMessage.addListener(function (content, sender) {
       chrome.tabs.query({}, function (tabs) {
         tabs.forEach((item) => {
           if (item.id !== tokenWindowId) {
-            chrome.tabs.sendMessage(item.id, token)
+            chrome.tabs.sendMessage(item.id, { token, from: 'copy' })
           }
         })
       })
     },
     paste: () => {
-      chrome.tabs.sendMessage(sender.tab.id, token)
+      chrome.tabs.sendMessage(sender.tab.id, { token, from: 'paste' })
     },
   }
   type[content.type]()

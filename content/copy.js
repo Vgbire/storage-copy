@@ -17,14 +17,17 @@ function setCookie(cname, cvalue, exdays) {
   document.cookie = cname + '=' + cvalue + '; ' + expires
 }
 
-function copy(token, websiteConfigs) {
+function copy(tokenInfo, websiteConfigs) {
+  const { token, from } = tokenInfo
   if (['sessionStorage', 'localStorage'].includes(websiteConfigs.storage)) {
+    const isNotSame = window[websiteConfigs.storage].getItem(websiteConfigs.field) !== token
     window[websiteConfigs.storage].setItem(websiteConfigs.field, token)
-    // window.location.reload() // 是否自动刷新可配置
+    if (from === 'copy' && isNotSame) window.location.reload()
     console.log('-----------------token paste complete-----------------')
   } else if (websiteConfigs.storage === 'cookie') {
+    const isNotSame = getCookie(websiteConfigs.field) !== token
     setCookie(websiteConfigs.field, token, 365)
-    // window.location.reload() // 是否自动刷新可配置
+    if (from === 'copy' && isNotSame) window.location.reload()
     console.log('-----------------token paste complete-----------------')
   }
 }
@@ -47,8 +50,8 @@ chrome.storage.sync.get('websiteConfigs', (data) => {
     }
   } else if (currentHref.includes(websiteConfigs.toDomain)) {
     chrome.runtime.sendMessage({ type: 'paste' })
-    chrome.runtime.onMessage.addListener((token) => {
-      copy(token, websiteConfigs)
+    chrome.runtime.onMessage.addListener((tokenInfo) => {
+      copy(tokenInfo, websiteConfigs)
     })
   }
 })
