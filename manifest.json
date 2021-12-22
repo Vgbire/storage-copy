@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "tokencv",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "复制浏览器网页的token，便于开发过程中token过期手动复制",
   "icons": {
     "128": "./icon/token.png"
