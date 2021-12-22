@@ -49,7 +49,7 @@ function init() {
         chrome.runtime.onMessage.addListener((content) => {
           if (currentHref.includes(content.websiteConfig.toDomain)) {
             let needFresh = true
-            copy(websiteConfig, needFresh)
+            copy(content.websiteConfig, needFresh)
           }
         })
       }
