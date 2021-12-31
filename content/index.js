@@ -16,7 +16,7 @@ function copy(websiteConfig, needFresh) {
 
 function init() {
   chrome.storage.sync.get(['websiteConfigs'], (data) => {
-    if (!data) return
+    if (!data?.websiteConfigs) return
     const websiteConfigs = data.websiteConfigs
     const currentHref = location.href
     const handledDomain = {}
