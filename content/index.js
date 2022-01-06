@@ -5,12 +5,10 @@ function copy(websiteConfig, needFresh) {
     const isNotSame = window[websiteConfig.storage].getItem(websiteConfig.field) !== token
     window[websiteConfig.storage].setItem(websiteConfig.field, token)
     if (needFresh && isNotSame) window.location.reload()
-    console.log('-----------------token paste complete-----------------')
   } else if (websiteConfig.storage === 'cookie') {
     const isNotSame = getCookie(websiteConfig.field) !== token
     setCookie(websiteConfig.field, token, 365)
     if (needFresh && isNotSame) window.location.reload()
-    console.log('-----------------token paste complete-----------------')
   }
 }
 
@@ -40,9 +38,6 @@ function init() {
           handledDomain[id] = token
           websiteConfig.token = token
           chrome.runtime.sendMessage({ websiteConfig })
-          console.log('-----------------token copy complete-----------------')
-        } else {
-          console.log('--------------------token is empty-------------------')
         }
       } else if (currentHref.includes(websiteConfig.toDomain)) {
         copy(websiteConfig)

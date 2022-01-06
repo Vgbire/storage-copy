@@ -1,3 +1,5 @@
+let websiteConfigs
+
 chrome.runtime.onMessage.addListener(function (content, sender) {
   let tokenWindowId = sender.tab.id
   chrome.tabs.query({}, function (tabs) {
@@ -16,5 +18,17 @@ function init() {
     })
   })
 }
+
+function setStorage(configs) {
+  websiteConfigs = configs
+}
+
+chrome.runtime.onConnect.addListener(function (externalPort) {
+  externalPort.onDisconnect.addListener(function () {
+    chrome.storage.sync.set({ websiteConfigs }, () => {
+      init()
+    })
+  })
+})
 
 init()
