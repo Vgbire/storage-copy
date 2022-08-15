@@ -25,7 +25,7 @@ function setStorage(configs) {
 
 chrome.runtime.onConnect.addListener(function (externalPort) {
   externalPort.onDisconnect.addListener(function () {
-    chrome.storage.sync.set({ websiteConfigs }, () => {
+    chrome.storage.local.set({ websiteConfigs }, () => {
       init()
     })
   })

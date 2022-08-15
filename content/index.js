@@ -13,7 +13,7 @@ function copy(websiteConfig, needFresh) {
 }
 
 function init() {
-  chrome.storage.sync.get(['websiteConfigs'], (data) => {
+  chrome.storage.local.get(['websiteConfigs'], (data) => {
     if (!data?.websiteConfigs) return
     const websiteConfigs = data.websiteConfigs
     const currentHref = location.href
@@ -49,7 +49,7 @@ function init() {
         })
       }
     })
-    chrome.storage.sync.set({ websiteConfigs: websiteConfigs })
+    chrome.storage.local.set({ websiteConfigs: websiteConfigs })
   })
 }
 
