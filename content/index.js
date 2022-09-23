@@ -13,6 +13,7 @@ function copy(websiteConfig, needFresh) {
 }
 
 function init() {
+  console.log('init')
   chrome.storage.local.get(['websiteConfigs'], (data) => {
     if (!data?.websiteConfigs) return
     const websiteConfigs = data.websiteConfigs

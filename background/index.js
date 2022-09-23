@@ -14,6 +14,7 @@ chrome.runtime.onMessage.addListener(function (content, sender) {
 function init() {
   chrome.tabs.query({}, function (tabs) {
     tabs.forEach((item) => {
+      console.log('xxx')
       chrome.tabs.sendMessage(item.id, { type: 'init' })
     })
   })
@@ -32,3 +33,7 @@ chrome.runtime.onConnect.addListener(function (externalPort) {
 })
 
 init()
+
+chrome.action.onClicked.addListener(()=>{
+  chrome.tabs.create({url: '../popup/index.html', active: true})
+})
