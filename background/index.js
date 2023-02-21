@@ -5,7 +5,9 @@ chrome.runtime.onMessage.addListener(function (content, sender) {
   chrome.tabs.query({}, function (tabs) {
     tabs.forEach((item) => {
       if (item.id !== tokenWindowId) {
-        chrome.tabs.sendMessage(item.id, { websiteConfig: content.websiteConfig })
+        chrome.tabs.sendMessage(item.id, {
+          websiteConfig: content.websiteConfig
+        })
       }
     })
   })
@@ -14,15 +16,18 @@ chrome.runtime.onMessage.addListener(function (content, sender) {
 function init() {
   chrome.tabs.query({}, function (tabs) {
     tabs.forEach((item) => {
-      console.log('xxx')
       chrome.tabs.sendMessage(item.id, { type: 'init' })
     })
   })
 }
 
-function setStorage(configs) {
-  websiteConfigs = configs
-}
+chrome.runtime.onConnect.addListener(function (port) {
+  if (port.name === 'popup-background-link') {
+    port.onMessage.addListener((configs) => {
+      websiteConfigs = configs
+    })
+  }
+})
 
 chrome.runtime.onConnect.addListener(function (externalPort) {
   externalPort.onDisconnect.addListener(function () {
@@ -34,6 +39,6 @@ chrome.runtime.onConnect.addListener(function (externalPort) {
 
 init()
 
-chrome.action.onClicked.addListener(()=>{
-  chrome.tabs.create({url: '../popup/index.html', active: true})
+chrome.action.onClicked.addListener(() => {
+  chrome.tabs.create({ url: '../popup/index.html', active: true })
 })

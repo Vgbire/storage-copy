@@ -6,14 +6,13 @@ function copy(websiteConfig, needFresh) {
     window[websiteConfig.storage].setItem(websiteConfig.field, token)
     if (needFresh && isNotSame) window.location.reload()
   } else if (websiteConfig.storage === 'cookie') {
-    const isNotSame = getCookie(websiteConfig.field) !== token
-    setCookie(websiteConfig.field, token, 365)
+    const isNotSame = xCookie.get(websiteConfig.field) !== token
+    xCookie.set(websiteConfig.field, token, Infinity, '/', location.hostname)
     if (needFresh && isNotSame) window.location.reload()
   }
 }
 
 function init() {
-  console.log('init')
   chrome.storage.local.get(['websiteConfigs'], (data) => {
     if (!data?.websiteConfigs) return
     const websiteConfigs = data.websiteConfigs
@@ -33,7 +32,7 @@ function init() {
         if (['sessionStorage', 'localStorage'].includes(websiteConfig.storage)) {
           token = window[websiteConfig.storage].getItem(websiteConfig.field)
         } else if (websiteConfig.storage === 'cookie') {
-          token = getCookie(websiteConfig.field)
+          token = xCookie.get(websiteConfig.field)
         }
         if (token) {
           handledDomain[id] = token
