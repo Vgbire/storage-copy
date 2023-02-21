@@ -8,7 +8,8 @@
   },
   "action": {
     "default_icon": "./icon/token.png",
-    "default_title": "tokencv"
+    "default_title": "tokencv",
+    "default_popup": "./popup/index.html"
   },
   "background": {
     "service_worker": "./background/index.js"
