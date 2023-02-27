@@ -26,15 +26,12 @@ chrome.runtime.onConnect.addListener(function (port) {
     port.onMessage.addListener((configs) => {
       websiteConfigs = configs
     })
-  }
-})
-
-chrome.runtime.onConnect.addListener(function (externalPort) {
-  externalPort.onDisconnect.addListener(function () {
-    chrome.storage.local.set({ websiteConfigs }, () => {
-      init()
+    port.onDisconnect.addListener(() => {
+      chrome.storage.local.set({ websiteConfigs }, () => {
+        init()
+      })
     })
-  })
+  }
 })
 
 init()

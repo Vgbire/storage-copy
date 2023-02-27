@@ -7,7 +7,11 @@ function copy(websiteConfig, needFresh) {
     if (needFresh && isNotSame) window.location.reload()
   } else if (websiteConfig.storage === 'cookie') {
     const isNotSame = xCookie.get(websiteConfig.field) !== token
-    xCookie.set(websiteConfig.field, token, Infinity, '/', location.hostname)
+    xCookie.remove(websiteConfig.field)
+    xCookie.remove(websiteConfig.field)
+    if (token) {
+      xCookie.set(websiteConfig.field, token, 9999999, '/', location.hostname)
+    }
     if (needFresh && isNotSame) window.location.reload()
   }
 }
@@ -34,11 +38,9 @@ function init() {
         } else if (websiteConfig.storage === 'cookie') {
           token = xCookie.get(websiteConfig.field)
         }
-        if (token) {
-          handledDomain[id] = token
-          websiteConfig.token = token
-          chrome.runtime.sendMessage({ websiteConfig })
-        }
+        handledDomain[id] = token
+        websiteConfig.token = token
+        chrome.runtime.sendMessage({ websiteConfig })
       } else if (currentHref.includes(websiteConfig.toDomain)) {
         copy(websiteConfig)
         chrome.runtime.onMessage.addListener((content) => {
