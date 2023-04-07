@@ -23,7 +23,9 @@ function init() {
     const currentHref = location.href
     const handledDomain = {}
     websiteConfigs.forEach((websiteConfig) => {
-      if (isError(websiteConfig)) return
+      if (isError(websiteConfig)) {
+        return
+      }
       if (currentHref.includes(websiteConfig.fromDomain)) {
         let id = websiteConfig.fromDomain + websiteConfig.storage + websiteConfig.field
         // 跳过已经拿到token的域名
@@ -44,7 +46,7 @@ function init() {
       } else if (currentHref.includes(websiteConfig.toDomain)) {
         copy(websiteConfig)
         chrome.runtime.onMessage.addListener((content) => {
-          if (currentHref.includes(content.websiteConfig.toDomain)) {
+          if (currentHref.includes(content.websiteConfig?.toDomain)) {
             let needFresh = true
             copy(content.websiteConfig, needFresh)
           }

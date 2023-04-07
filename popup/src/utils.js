@@ -1,4 +1,4 @@
-import { Message } from '@arco-design/web-react'
+import { message } from 'antd'
 
 export function debounce(func, delay) {
   let timeout
@@ -25,7 +25,7 @@ export function copy(value) {
   textarea.select()
   const result = document.execCommand('Copy')
   if (result) {
-    Message.success('Copy Success') // 可根据项目UI仔细设计
+    message.success('Copy Success') // 可根据项目UI仔细设计
   }
   document.body.removeChild(textarea)
 }

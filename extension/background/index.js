@@ -25,8 +25,6 @@ chrome.runtime.onConnect.addListener(function (port) {
   if (port.name === 'popup-background-link') {
     port.onMessage.addListener((configs) => {
       websiteConfigs = configs
-    })
-    port.onDisconnect.addListener(() => {
       chrome.storage.local.set({ websiteConfigs }, () => {
         init()
       })
@@ -36,6 +34,6 @@ chrome.runtime.onConnect.addListener(function (port) {
 
 init()
 
-// chrome.action.onClicked.addListener(() => {
-//   chrome.tabs.create({ url: '../popup/index.html', active: true })
-// })
+chrome.action.onClicked.addListener(() => {
+  chrome.tabs.create({ url: '../popup/index.html', active: true })
+})

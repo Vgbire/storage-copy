@@ -1,28 +1,28 @@
 import { useState, useEffect } from 'react'
 import './style.scss'
-import { Table, Input, Select, Tooltip } from '@arco-design/web-react'
-import { IconPlusCircleFill, IconMinusCircleFill } from '@arco-design/web-react/icon'
+import { Table, Input, Select, Tooltip, Switch } from 'antd'
+import { PlusCircleTwoTone, MinusCircleTwoTone } from '@ant-design/icons'
 import { IS_PROD } from '@/constant.js'
 import { debounce, copy } from '@/utils.js'
 
 IS_PROD && chrome.runtime.connect()
 
 export default function App() {
-  const PopupToBackgroundPort = IS_PROD && chrome.runtime.connect({ name: 'popup-background-link' })
+  const connectToBackground = IS_PROD && chrome.runtime.connect({ name: 'popup-background-link' })
 
   const storageOptions = [
     { label: 'Local Storage', value: 'localStorage' },
     { label: 'Session Storage', value: 'sessionStorage' },
     { label: 'Cookie', value: 'cookie' }
   ]
+  const [id, setId] = useState(1)
+  const [configs, setConfigs] = useState([{ status: true, id }])
 
-  const [configs, setConfigs] = useState([{}])
-
-  const setStorage = debounce(function setStorage() {
+  const setStorage = debounce(() => {
     if (IS_PROD) {
-      PopupToBackgroundPort.postMessage(configs)
+      connectToBackground.postMessage(configs)
     }
-  }, 100)
+  }, 200)
 
   useEffect(() => {
     IS_PROD &&
@@ -36,7 +36,8 @@ export default function App() {
   }, [configs])
 
   function addConfig() {
-    setConfigs([...configs, {}])
+    setId(id + 1)
+    setConfigs([...configs, { status: true, id: id + 1 }])
   }
 
   function removeConfig(key) {
@@ -45,37 +46,10 @@ export default function App() {
     }
   }
 
-  function changeFromDomain(key, value) {
+  function changeField(index, key, value) {
     setConfigs(
-      configs.map((item, index) => {
-        if (index === key) item.fromDomain = value
-        return item
-      })
-    )
-  }
-
-  function changeToDomain(key, value) {
-    setConfigs(
-      configs.map((item, index) => {
-        if (index === key) item.toDomain = value
-        return item
-      })
-    )
-  }
-
-  function changeStorage(key, value) {
-    setConfigs(
-      configs.map((item, index) => {
-        if (index === key) item.storage = value
-        return item
-      })
-    )
-  }
-
-  function changeField(key, value) {
-    setConfigs(
-      configs.map((item, index) => {
-        if (index === key) item.field = value
+      configs.map((item, configIndex) => {
+        if (configIndex === index) item[key] = value
         return item
       })
     )
@@ -83,33 +57,52 @@ export default function App() {
 
   const columns = [
     {
-      title: 'From Domain',
-      dataIndex: 'fromDomain',
+      title: 'Status',
+      dataIndex: 'status',
       render: (value, record, index) => {
         return (
-          <Input
-            allowClear
-            value={value}
+          <Switch
+            checked={value}
             onChange={(value) => {
-              changeFromDomain(index, value)
+              changeField(index, 'status', value)
             }}
           />
         )
       }
     },
     {
-      title: 'To Domain',
+      title: 'Source Site',
+      dataIndex: 'fromDomain',
+      width: 180,
+      render: (value, record, index) => {
+        return (
+          <>
+            <Input
+              value={value}
+              style={{ width: 130 }}
+              onChange={(e) => {
+                changeField(index, 'fromDomain', e.target.value)
+              }}
+            />
+          </>
+        )
+      }
+    },
+    {
+      title: 'Target Site',
       dataIndex: 'toDomain',
       render: (value, record, index) => {
         return (
           <Input
-            allowClear
             value={value}
-            onChange={(value) => {
-              changeToDomain(index, value)
+            onChange={(e) => {
+              changeField(index, 'toDomain', e.target.value)
             }}
           />
         )
+      },
+      onCell: (record) => {
+        return { rowSpan: record.span || 1 }
       }
     },
     {
@@ -122,8 +115,9 @@ export default function App() {
             allowClear
             value={value}
             options={storageOptions}
+            style={{ width: '100%' }}
             onChange={(value) => {
-              changeStorage(index, value)
+              changeField(index, 'storage', value)
             }}
           />
         )
@@ -131,23 +125,21 @@ export default function App() {
     },
     {
       title: 'Field',
-      width: 100,
       dataIndex: 'field',
       render: (value, record, index) => {
         return (
           <Input
             allowClear
             value={value}
-            onChange={(value) => {
-              changeField(index, value)
+            onChange={(e) => {
+              changeField(index, 'field', e.target.value)
             }}
           />
         )
       }
     },
     {
-      title: 'Token',
-      width: 100,
+      title: 'Value',
       dataIndex: 'token',
       render: (value) => {
         return (
@@ -169,13 +161,13 @@ export default function App() {
     },
     {
       title: 'Operation',
-      width: 100,
       dataIndex: 'operation',
       render: (value, record, index) => {
         return (
-          <div style={{ fontSize: '20px' }}>
-            <IconPlusCircleFill onClick={addConfig} />
-            <IconMinusCircleFill
+          <div style={{ fontSize: '20px', textAlign: 'center' }}>
+            <PlusCircleTwoTone onClick={addConfig} />
+            <MinusCircleTwoTone
+              style={{ marginLeft: '8px' }}
               onClick={() => {
                 removeConfig(index)
               }}
@@ -189,10 +181,12 @@ export default function App() {
   return (
     <div className="popup-container">
       <Table
+        rowKey="id"
+        size="small"
+        bordered={false}
         columns={columns}
-        data={configs}
+        dataSource={configs}
         pagination={false}
-        scroll={{ y: 250 }}
       />
     </div>
   )
