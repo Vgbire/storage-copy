@@ -1,6 +1,6 @@
 let websiteConfigs
 
-chrome.runtime.onMessage.addListener(function (content, sender) {
+chrome.runtime.onMessage.addListener(function (content, sender, sendResponse) {
   let tokenWindowId = sender.tab.id
   chrome.tabs.query({}, function (tabs) {
     tabs.forEach((item) => {
@@ -11,6 +11,8 @@ chrome.runtime.onMessage.addListener(function (content, sender) {
       }
     })
   })
+  // this line seems meaningless but you have to invoke it to avoid error.
+  sendResponse({ damn: true })
 })
 
 function init() {

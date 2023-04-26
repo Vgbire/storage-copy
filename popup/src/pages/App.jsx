@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import './style.scss'
-import { Table, Input, Select, Tooltip, Switch } from 'antd'
+import { Table, Input, Select, Tooltip, Switch, Button } from 'antd'
 import { PlusCircleTwoTone, MinusCircleTwoTone } from '@ant-design/icons'
 import { IS_PROD } from '@/constant.js'
-import { debounce, copy } from '@/utils.js'
+import { copy } from '@/utils.js'
 
 IS_PROD && chrome.runtime.connect()
 
@@ -18,11 +18,11 @@ export default function App() {
   const [id, setId] = useState(1)
   const [configs, setConfigs] = useState([{ status: true, id }])
 
-  const setStorage = debounce(() => {
+  const setStorage = () => {
     if (IS_PROD) {
       connectToBackground.postMessage(configs)
     }
-  }, 200)
+  }
 
   useEffect(() => {
     IS_PROD &&
@@ -30,10 +30,6 @@ export default function App() {
         if (data?.websiteConfigs) setConfigs(data.websiteConfigs)
       })
   }, [])
-
-  useEffect(() => {
-    setStorage()
-  }, [configs])
 
   function addConfig() {
     setId(id + 1)
@@ -188,6 +184,14 @@ export default function App() {
         dataSource={configs}
         pagination={false}
       />
+      <Button
+        type="primary"
+        style={{ marginTop: '10px', textAlign: 'center' }}
+        onClick={() => {
+          setStorage()
+        }}>
+        Confirm
+      </Button>
     </div>
   )
 }
