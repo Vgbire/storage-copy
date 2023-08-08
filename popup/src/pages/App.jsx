@@ -3,7 +3,7 @@ import './style.scss'
 import { Table, Input, Select, Tooltip, Switch, Button } from 'antd'
 import { PlusCircleTwoTone, MinusCircleTwoTone } from '@ant-design/icons'
 import { IS_PROD } from '@/constant.js'
-import { copy } from '@/utils.js'
+import { copy, uuid } from '@/utils.js'
 
 IS_PROD && chrome.runtime.connect()
 
@@ -15,8 +15,7 @@ export default function App() {
     { label: 'Session Storage', value: 'sessionStorage' },
     { label: 'Cookie', value: 'cookie' }
   ]
-  const [id, setId] = useState(1)
-  const [configs, setConfigs] = useState([{ status: true, id }])
+  const [configs, setConfigs] = useState([{ status: true, id: uuid() }])
 
   const setStorage = () => {
     if (IS_PROD) {
@@ -32,13 +31,13 @@ export default function App() {
   }, [])
 
   function addConfig() {
-    setId(id + 1)
-    setConfigs([...configs, { status: true, id: id + 1 }])
+    setConfigs([...configs, { status: true, id: uuid() }])
   }
 
-  function removeConfig(key) {
+  function removeConfig(index) {
     if (configs.length > 1) {
-      setConfigs(configs.filter((item, index) => key !== index))
+      configs.splice(index, 1)
+      setConfigs([...configs])
     }
   }
 
