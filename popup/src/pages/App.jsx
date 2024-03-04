@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './style.scss'
-import { Table, Input, Select, Tooltip, Switch, Button } from 'antd'
-import { PlusCircleTwoTone, MinusCircleTwoTone } from '@ant-design/icons'
+import { Table, Input, Select, Tooltip, Switch, Button, Alert } from 'antd'
+import { PlusCircleTwoTone, MinusCircleTwoTone, QuestionCircleOutlined } from '@ant-design/icons'
 import { IS_PROD } from '@/constant.js'
 import { copy, uuid } from '@/utils.js'
 
@@ -54,6 +54,7 @@ export default function App() {
     {
       title: 'Status',
       dataIndex: 'status',
+      width: 100,
       render: (value, record, index) => {
         return (
           <Switch
@@ -68,13 +69,11 @@ export default function App() {
     {
       title: 'Source Site',
       dataIndex: 'fromDomain',
-      width: 180,
       render: (value, record, index) => {
         return (
           <>
             <Input
               value={value}
-              style={{ width: 130 }}
               onChange={(e) => {
                 changeField(index, 'fromDomain', e.target.value)
               }}
@@ -136,20 +135,22 @@ export default function App() {
     {
       title: 'Value',
       dataIndex: 'token',
-      render: (value) => {
+      ellipsis: { showTitle: false },
+      render: (text) => {
+        if (typeof text === 'object') {
+          text = JSON.stringify(text)
+        }
         return (
-          <Tooltip content="点击复制">
-            {
-              <Input
-                readOnly
-                value={value}
-                title="点击复制"
-                style={{ cursor: 'pointer' }}
-                onClick={() => {
-                  copy(value)
-                }}
-              />
-            }
+          <Tooltip
+            title="点击复制"
+            placement="topLeft">
+            <span
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                copy(text)
+              }}>
+              {text}
+            </span>
           </Tooltip>
         )
       }
@@ -157,6 +158,7 @@ export default function App() {
     {
       title: 'Operation',
       dataIndex: 'operation',
+      width: 100,
       render: (value, record, index) => {
         return (
           <div style={{ fontSize: '20px', textAlign: 'center' }}>
@@ -182,6 +184,11 @@ export default function App() {
         columns={columns}
         dataSource={configs}
         pagination={false}
+      />
+      <Alert
+        style={{ marginTop: '10px' }}
+        message="New feature: when field is empty, copy all"
+        type="warning"
       />
       <Button
         type="primary"

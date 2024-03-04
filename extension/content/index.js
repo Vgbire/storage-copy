@@ -3,14 +3,28 @@ function copy(websiteConfig, needFresh) {
 
   if (['sessionStorage', 'localStorage'].includes(websiteConfig.storage)) {
     const isNotSame = window[websiteConfig.storage].getItem(websiteConfig.field) !== token
-    window[websiteConfig.storage].setItem(websiteConfig.field, token)
+    // 如果field存在则获取单个localStorage,如果不存在，则获取所有的localStorage
+    if (websiteConfig.field) {
+      window[websiteConfig.storage].setItem(websiteConfig.field, token)
+    } else {
+      Object.keys(websiteConfig.token).forEach((key) => {
+        window[websiteConfig.storage].setItem(key, websiteConfig.token[key])
+      })
+    }
     if (needFresh && isNotSame) window.location.reload()
   } else if (websiteConfig.storage === 'cookie') {
     const isNotSame = xCookie.get(websiteConfig.field) !== token
-    xCookie.remove(websiteConfig.field)
-    xCookie.remove(websiteConfig.field)
-    if (token) {
-      xCookie.set(websiteConfig.field, token, 9999999, '/', location.hostname)
+    // 如果field存在则获取单个cookie,如果不存在，则获取所有的localStorage
+    if (websiteConfig.field) {
+      xCookie.remove(websiteConfig.field)
+      xCookie.remove(websiteConfig.field)
+      if (token) {
+        xCookie.set(websiteConfig.field, token, 9999999, '/', location.hostname)
+      }
+    } else {
+      xCookie.keys(token).forEach((item) => {
+        xCookie.set(item, xCookie.get(item), 9999999, '/', location.hostname)
+      })
     }
     if (needFresh && isNotSame) window.location.reload()
   }
@@ -36,9 +50,25 @@ function init() {
 
         let token
         if (['sessionStorage', 'localStorage'].includes(websiteConfig.storage)) {
-          token = window[websiteConfig.storage].getItem(websiteConfig.field)
+          // 如果field存在则获取单个localStorage,如果不存在，则获取所有的localStorage
+          if (websiteConfig.field) {
+            token = window[websiteConfig.storage].getItem(websiteConfig.field)
+          } else {
+            const localStorageObj = {}
+            for (var i = 0; i < localStorage.length; i++) {
+              var key = localStorage.key(i)
+              var value = localStorage.getItem(key)
+              localStorageObj[key] = value
+            }
+            token = localStorageObj
+          }
         } else if (websiteConfig.storage === 'cookie') {
-          token = xCookie.get(websiteConfig.field)
+          // 如果field存在则获取单个cookie,如果不存在，则获取所有的localStorage
+          if (websiteConfig.field) {
+            token = xCookie.get(websiteConfig.field)
+          } else {
+            token = window.document.cookie
+          }
         }
         handledDomain[id] = token
         websiteConfig.token = token
