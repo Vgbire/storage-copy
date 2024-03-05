@@ -30,10 +30,6 @@ export default function App() {
       })
   }, [])
 
-  function addConfig() {
-    setConfigs([...configs, { status: true, id: uuid() }])
-  }
-
   function removeConfig(index) {
     if (configs.length > 1) {
       configs.splice(index, 1)
@@ -162,7 +158,12 @@ export default function App() {
       render: (value, record, index) => {
         return (
           <div style={{ fontSize: '20px', textAlign: 'center' }}>
-            <PlusCircleTwoTone onClick={addConfig} />
+            <PlusCircleTwoTone
+              onClick={() => {
+                configs.splice(index, 0, { ...record, id: uuid() })
+                setConfigs([...configs])
+              }}
+            />
             <MinusCircleTwoTone
               style={{ marginLeft: '8px' }}
               onClick={() => {
