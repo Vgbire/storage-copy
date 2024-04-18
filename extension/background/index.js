@@ -1,5 +1,6 @@
 let websiteConfigs
-
+// TO DO 恭喜发财、步步高升。生活不易，投喂随意。小彩蛋
+// TO监控localStorage的change
 chrome.runtime.onMessage.addListener(function (content, sender, sendResponse) {
   let tokenWindowId = sender.tab.id
   chrome.tabs.query({}, function (tabs) {

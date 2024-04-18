@@ -191,7 +191,7 @@ export default function App() {
         message={
           <span>
             New feature: when field is empty, copy all
-            <Tooltip title="In this case, it is important to note that all the stored data obtained from the source site should not exceed 5M, as this exceeds the plugin's storage limit, which is also 5M. If it cannot be used because it is exceeded, please fill in the field to avoid getting too much data.">
+            <Tooltip title="In this case, it is important to note that all the stored data obtained from the source site should not exceed 10M, as this exceeds the plugin's storage limit. If it cannot be used because it is exceeded, please fill in the field to avoid getting too much data.">
               <QuestionCircleOutlined style={{ marginLeft: 5 }} />
             </Tooltip>
           </span>
