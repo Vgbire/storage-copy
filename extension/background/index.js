@@ -1,6 +1,10 @@
 let websiteConfigs
-// TO DO 恭喜发财、步步高升。生活不易，投喂随意。小彩蛋
-// TO监控localStorage的change
+/* TO DO 恭喜发财、步步高升。生活不易，投喂随意。小彩蛋
+ * TO DO 监控storage的window.addEventListener('storage',(e)=>{
+ *    console.log('x',e)
+ *  })
+ * cookieStore.onchange = (event) => { }
+ */
 chrome.runtime.onMessage.addListener(function (content, sender, sendResponse) {
   let tokenWindowId = sender.tab.id
   chrome.tabs.query({}, function (tabs) {

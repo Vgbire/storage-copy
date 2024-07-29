@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "tokencv",
-  "version": "2.7.0",
+  "version": "2.7.1",
   "description": "Copying Cookies, LocalStorage, SessionStorage from One Website to Another Website",
   "icons": {
     "128": "./icon/token.png"

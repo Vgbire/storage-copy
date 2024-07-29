@@ -70,6 +70,7 @@ export default function App() {
           <>
             <Input
               value={value}
+              placeholder="www.xxx-test.com/xx"
               onChange={(e) => {
                 changeField(index, 'fromDomain', e.target.value)
               }}
@@ -85,6 +86,7 @@ export default function App() {
         return (
           <Input
             value={value}
+            placeholder="localhost:8080"
             onChange={(e) => {
               changeField(index, 'toDomain', e.target.value)
             }}
