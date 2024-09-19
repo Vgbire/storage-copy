@@ -6,12 +6,12 @@ let websiteConfigs
  * cookieStore.onchange = (event) => { }
  */
 chrome.runtime.onMessage.addListener(function (content, sender, sendResponse) {
-  let tokenWindowId = sender.tab.id
+  const tokenWindowId = sender?.tab?.id
   chrome.tabs.query({}, function (tabs) {
     tabs.forEach((item) => {
       if (item.id !== tokenWindowId) {
-        chrome.tabs.sendMessage(item.id, {
-          websiteConfig: content.websiteConfig
+        chrome.tabs.sendMessage(item.id as number, {
+          websiteConfig: content.websiteConfig,
         })
       }
     })
@@ -23,13 +23,13 @@ chrome.runtime.onMessage.addListener(function (content, sender, sendResponse) {
 function init() {
   chrome.tabs.query({}, function (tabs) {
     tabs.forEach((item) => {
-      chrome.tabs.sendMessage(item.id, { type: 'init' })
+      chrome.tabs.sendMessage(item.id as number, { type: "init" })
     })
   })
 }
 
 chrome.runtime.onConnect.addListener(function (port) {
-  if (port.name === 'popup-background-link') {
+  if (port.name === "popup-background-link") {
     port.onMessage.addListener((configs) => {
       websiteConfigs = configs
       chrome.storage.local.set({ websiteConfigs }, () => {
@@ -42,5 +42,5 @@ chrome.runtime.onConnect.addListener(function (port) {
 init()
 
 chrome.action.onClicked.addListener(() => {
-  chrome.tabs.create({ url: '../popup/index.html', active: true })
+  chrome.tabs.create({ url: "../index.html", active: true })
 })

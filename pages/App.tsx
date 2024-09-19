@@ -1,33 +1,35 @@
-import { useState, useEffect } from 'react'
-import './style.scss'
-import { Table, Input, Select, Tooltip, Switch, Button, Alert } from 'antd'
-import { PlusCircleTwoTone, MinusCircleTwoTone, QuestionCircleOutlined } from '@ant-design/icons'
-import { IS_PROD } from '@/constant.js'
-import { copy, uuid } from '@/utils.js'
+import { useState, useEffect } from "react"
+import "./style.css"
+import { Table, Input, Select, Tooltip, Switch, Button, Alert } from "antd"
+import {
+  PlusCircleTwoTone,
+  MinusCircleTwoTone,
+  QuestionCircleOutlined,
+} from "@ant-design/icons"
+import { copy, uuid } from "./utils"
 
-IS_PROD && chrome.runtime.connect()
+chrome.runtime.connect()
 
 export default function App() {
-  const connectToBackground = IS_PROD && chrome.runtime.connect({ name: 'popup-background-link' })
+  const connectToBackground = chrome.runtime.connect({
+    name: "popup-background-link",
+  })
 
   const storageOptions = [
-    { label: 'Local Storage', value: 'localStorage' },
-    { label: 'Session Storage', value: 'sessionStorage' },
-    { label: 'Cookie', value: 'cookie' }
+    { label: "Local Storage", value: "localStorage" },
+    { label: "Session Storage", value: "sessionStorage" },
+    { label: "Cookie", value: "cookie" },
   ]
   const [configs, setConfigs] = useState([{ status: true, id: uuid() }])
 
   const setStorage = () => {
-    if (IS_PROD) {
-      connectToBackground.postMessage(configs)
-    }
+    connectToBackground.postMessage(configs)
   }
 
   useEffect(() => {
-    IS_PROD &&
-      chrome.storage.local.get('websiteConfigs', (data) => {
-        if (data?.websiteConfigs) setConfigs(data.websiteConfigs)
-      })
+    chrome.storage.local.get("websiteConfigs", (data) => {
+      if (data?.websiteConfigs) setConfigs(data.websiteConfigs)
+    })
   }, [])
 
   function removeConfig(index) {
@@ -48,23 +50,23 @@ export default function App() {
 
   const columns = [
     {
-      title: 'Status',
-      dataIndex: 'status',
+      title: "Status",
+      dataIndex: "status",
       width: 100,
       render: (value, record, index) => {
         return (
           <Switch
             checked={value}
             onChange={(value) => {
-              changeField(index, 'status', value)
+              changeField(index, "status", value)
             }}
           />
         )
-      }
+      },
     },
     {
-      title: 'Source Site',
-      dataIndex: 'fromDomain',
+      title: "Source Site",
+      dataIndex: "fromDomain",
       render: (value, record, index) => {
         return (
           <>
@@ -72,94 +74,93 @@ export default function App() {
               value={value}
               placeholder="www.xxx-test.com/xx"
               onChange={(e) => {
-                changeField(index, 'fromDomain', e.target.value)
+                changeField(index, "fromDomain", e.target.value)
               }}
             />
           </>
         )
-      }
+      },
     },
     {
-      title: 'Target Site',
-      dataIndex: 'toDomain',
+      title: "Target Site",
+      dataIndex: "toDomain",
       render: (value, record, index) => {
         return (
           <Input
             value={value}
             placeholder="localhost:8080"
             onChange={(e) => {
-              changeField(index, 'toDomain', e.target.value)
+              changeField(index, "toDomain", e.target.value)
             }}
           />
         )
       },
       onCell: (record) => {
         return { rowSpan: record.span || 1 }
-      }
+      },
     },
     {
-      title: 'Storage',
+      title: "Storage",
       width: 170,
-      dataIndex: 'storage',
+      dataIndex: "storage",
       render: (value, record, index) => {
         return (
           <Select
             allowClear
             value={value}
             options={storageOptions}
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
             onChange={(value) => {
-              changeField(index, 'storage', value)
+              changeField(index, "storage", value)
             }}
           />
         )
-      }
+      },
     },
     {
-      title: 'Field',
-      dataIndex: 'field',
+      title: "Field",
+      dataIndex: "field",
       render: (value, record, index) => {
         return (
           <Input
             allowClear
             value={value}
             onChange={(e) => {
-              changeField(index, 'field', e.target.value)
+              changeField(index, "field", e.target.value)
             }}
           />
         )
-      }
+      },
     },
     {
-      title: 'Value',
-      dataIndex: 'token',
+      title: "Value",
+      dataIndex: "token",
       ellipsis: { showTitle: false },
       render: (text) => {
-        if (typeof text === 'object') {
+        if (typeof text === "object") {
           text = JSON.stringify(text)
         }
         return (
-          <Tooltip
-            title="点击复制"
-            placement="topLeft">
+          <Tooltip title="点击复制" placement="topLeft">
             <span
-              style={{ cursor: 'pointer' }}
+              style={{ cursor: "pointer" }}
               onClick={() => {
                 copy(text)
-              }}>
+              }}
+            >
               {text}
             </span>
           </Tooltip>
         )
-      }
+      },
     },
     {
-      title: 'Operation',
-      dataIndex: 'operation',
+      title: "Operation",
+      dataIndex: "operation",
       width: 100,
       render: (value, record, index) => {
         return (
-          <div style={{ fontSize: '20px', textAlign: 'center' }}>
+          <div style={{ fontSize: "20px", textAlign: "center" }}>
             <PlusCircleTwoTone
               onClick={() => {
                 configs.splice(index, 0, { ...record, id: uuid() })
@@ -167,15 +168,15 @@ export default function App() {
               }}
             />
             <MinusCircleTwoTone
-              style={{ marginLeft: '8px' }}
+              style={{ marginLeft: "8px" }}
               onClick={() => {
                 removeConfig(index)
               }}
             />
           </div>
         )
-      }
-    }
+      },
+    },
   ]
 
   return (
@@ -189,7 +190,7 @@ export default function App() {
         pagination={false}
       />
       <Alert
-        style={{ marginTop: '10px' }}
+        style={{ marginTop: "10px" }}
         message={
           <span>
             New feature: when field is empty, copy all
@@ -202,10 +203,11 @@ export default function App() {
       />
       <Button
         type="primary"
-        style={{ marginTop: '10px', textAlign: 'center' }}
+        style={{ marginTop: "10px", textAlign: "center" }}
         onClick={() => {
           setStorage()
-        }}>
+        }}
+      >
         Confirm
       </Button>
     </div>

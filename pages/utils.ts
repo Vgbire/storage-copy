@@ -1,21 +1,21 @@
-import { message } from 'antd'
+import { message } from "antd"
 
-export function copy(value) {
+export function copy(value: string) {
   // 动态创建 textarea 标签
-  const textarea = document.createElement('textarea')
+  const textarea = document.createElement("textarea")
   // 将该 textarea 设为 readonly 防止 iOS 下自动唤起键盘，同时将 textarea 移出可视区域
-  textarea.readOnly = 'readonly'
-  textarea.style.position = 'absolute'
-  textarea.style.left = '-9999px'
+  textarea.readOnly = true
+  textarea.style.position = "absolute"
+  textarea.style.left = "-9999px"
   // 将要 copy 的值赋给 textarea 标签的 value 属性
   textarea.value = value
   // 将 textarea 插入到 body 中
   document.body.appendChild(textarea)
   // 选中值并复制
   textarea.select()
-  const result = document.execCommand('Copy')
+  const result = document.execCommand("Copy")
   if (result) {
-    message.success('Copy Success') // 可根据项目UI仔细设计
+    message.success("Copy Success") // 可根据项目UI仔细设计
   }
   document.body.removeChild(textarea)
 }
@@ -29,7 +29,7 @@ export const uuid = () => {
 
   const d2 = (performance && performance.now && performance.now() * 1000) || 0
 
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
     let r = Math.random() * 16
 
     if (d > 0) {
@@ -40,7 +40,7 @@ export const uuid = () => {
       d = Math.floor(d2 / 16)
     }
 
-    const v = c === 'x' ? r : (r & 0x3) | 0x8
+    const v = c === "x" ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
 }
