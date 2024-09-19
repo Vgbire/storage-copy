@@ -1,19 +1,18 @@
 import { defineManifest } from "@crxjs/vite-plugin"
 import packageJson from "./package.json"
-const { version } = packageJson
+const { name, version, description } = packageJson
 
 export default defineManifest(async () => ({
   manifest_version: 3,
-  name: "tokencv",
+  name: name,
   version: version,
-  description:
-    "Copying Cookies, LocalStorage, SessionStorage from One Website to Another Website",
+  description: description,
   icons: {
     "128": "public/token.png",
   },
   action: {
     default_icon: "public/token.png",
-    default_title: "tokencv",
+    default_title: name,
   },
   background: {
     service_worker: "src/background/index.ts",

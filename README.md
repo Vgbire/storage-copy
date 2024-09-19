@@ -4,7 +4,7 @@
 
 ## 如何安装
 
-1. 直接在 chrome 商店搜索 tokencv 安装，[点击安装](https://chromewebstore.google.com/detail/tokencv/jegglbdmahjijagibdjefocmhphcmlif)
+1. 直接在 chrome 商店搜索 Storage Copy 安装，[点击安装](https://chromewebstore.google.com/detail/tokencv/jegglbdmahjijagibdjefocmhphcmlif)
 2. 如果不能访问谷歌商店，直接拉取代码，在谷歌浏览器打开扩展程序 -> 加载已经解压过的扩展程序 -> 选择 extension 文件夹
 
 ## 如何调试

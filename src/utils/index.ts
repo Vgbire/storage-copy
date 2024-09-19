@@ -1,6 +1,8 @@
 import { message } from "antd"
+import { IWebsiteConfig } from "../content"
+import i18n from "../i18n"
 
-export function copy(value: string) {
+export const copy = (value: string) => {
   // 动态创建 textarea 标签
   const textarea = document.createElement("textarea")
   // 将该 textarea 设为 readonly 防止 iOS 下自动唤起键盘，同时将 textarea 移出可视区域
@@ -15,7 +17,7 @@ export function copy(value: string) {
   textarea.select()
   const result = document.execCommand("Copy")
   if (result) {
-    message.success("Copy Success") // 可根据项目UI仔细设计
+    message.success(i18n.t("copySuccess")) // 可根据项目UI仔细设计
   }
   document.body.removeChild(textarea)
 }
@@ -42,5 +44,13 @@ export const uuid = () => {
 
     const v = c === "x" ? r : (r & 0x3) | 0x8
     return v.toString(16)
+  })
+}
+
+export const isError = (websiteConfig: IWebsiteConfig) => {
+  return ["status", "fromDomain", "toDomain", "storage"].some((item) => {
+    if (!websiteConfig[item]) {
+      return true
+    }
   })
 }

@@ -1,20 +1,12 @@
 import { useState, useEffect } from "react"
 import "./style.css"
-import { Table, Input, Select, Tooltip, Switch, Button, Alert } from "antd"
-import {
-  PlusCircleTwoTone,
-  MinusCircleTwoTone,
-  QuestionCircleOutlined,
-} from "@ant-design/icons"
-import { copy, uuid } from "./utils"
-
-chrome.runtime.connect()
+import { Table, Input, Select, Switch, Button } from "antd"
+import { PlusCircleTwoTone, MinusCircleTwoTone } from "@ant-design/icons"
+import { copy, uuid } from "../utils"
+import i18n from "../i18n"
+import IconTip from "./components/IconTip"
 
 export default function App() {
-  const connectToBackground = chrome.runtime.connect({
-    name: "popup-background-link",
-  })
-
   const storageOptions = [
     { label: "Local Storage", value: "localStorage" },
     { label: "Session Storage", value: "sessionStorage" },
@@ -22,15 +14,19 @@ export default function App() {
   ]
   const [configs, setConfigs] = useState([{ status: true, id: uuid() }])
 
-  const setStorage = () => {
-    connectToBackground.postMessage(configs)
-  }
-
-  useEffect(() => {
+  const getConfigFromStorage = () => {
     chrome.storage.local.get("websiteConfigs", (data) => {
       if (data?.websiteConfigs) setConfigs(data.websiteConfigs)
     })
+  }
+
+  useEffect(() => {
+    getConfigFromStorage()
   }, [])
+
+  chrome.storage.onChanged.addListener(() => {
+    getConfigFromStorage()
+  })
 
   function removeConfig(index) {
     if (configs.length > 1) {
@@ -50,7 +46,7 @@ export default function App() {
 
   const columns = [
     {
-      title: "Status",
+      title: i18n.t("enabled"),
       dataIndex: "status",
       width: 100,
       render: (value, record, index) => {
@@ -65,14 +61,18 @@ export default function App() {
       },
     },
     {
-      title: "Source Site",
+      title: (
+        <>
+          {i18n.t("sourceSite")} <IconTip title={i18n.t("sourceSiteTip")} />
+        </>
+      ),
       dataIndex: "fromDomain",
       render: (value, record, index) => {
         return (
           <>
             <Input
               value={value}
-              placeholder="www.xxx-test.com/xx"
+              placeholder="xxx.com"
               onChange={(e) => {
                 changeField(index, "fromDomain", e.target.value)
               }}
@@ -82,7 +82,11 @@ export default function App() {
       },
     },
     {
-      title: "Target Site",
+      title: (
+        <>
+          {i18n.t("targetSite")} <IconTip title={i18n.t("targetSiteTip")} />
+        </>
+      ),
       dataIndex: "toDomain",
       render: (value, record, index) => {
         return (
@@ -100,7 +104,7 @@ export default function App() {
       },
     },
     {
-      title: "Storage",
+      title: i18n.t("storage"),
       width: 170,
       dataIndex: "storage",
       render: (value, record, index) => {
@@ -113,12 +117,18 @@ export default function App() {
             onChange={(value) => {
               changeField(index, "storage", value)
             }}
+            placeholder={i18n.t("storage")}
           />
         )
       },
     },
     {
-      title: "Field",
+      title: (
+        <>
+          {i18n.t("storageField")}
+          <IconTip title={i18n.t("storageFieldTip")} />
+        </>
+      ),
       dataIndex: "field",
       render: (value, record, index) => {
         return (
@@ -128,12 +138,18 @@ export default function App() {
             onChange={(e) => {
               changeField(index, "field", e.target.value)
             }}
+            placeholder="token"
           />
         )
       },
     },
     {
-      title: "Value",
+      title: (
+        <>
+          {i18n.t("storageValue")}
+          <IconTip title={i18n.t("storageValueTip")} />
+        </>
+      ),
       dataIndex: "token",
       ellipsis: { showTitle: false },
       render: (text) => {
@@ -141,21 +157,19 @@ export default function App() {
           text = JSON.stringify(text)
         }
         return (
-          <Tooltip title="点击复制" placement="topLeft">
-            <span
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                copy(text)
-              }}
-            >
-              {text}
-            </span>
-          </Tooltip>
+          <span
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              copy(text)
+            }}
+          >
+            {text}
+          </span>
         )
       },
     },
     {
-      title: "Operation",
+      title: i18n.t("operation"),
       dataIndex: "operation",
       width: 100,
       render: (value, record, index) => {
@@ -189,7 +203,7 @@ export default function App() {
         dataSource={configs}
         pagination={false}
       />
-      <Alert
+      {/* <Alert
         style={{ marginTop: "10px" }}
         message={
           <span>
@@ -200,15 +214,15 @@ export default function App() {
           </span>
         }
         type="warning"
-      />
+      /> */}
       <Button
         type="primary"
         style={{ marginTop: "10px", textAlign: "center" }}
         onClick={() => {
-          setStorage()
+          chrome.storage.local.set({ websiteConfigs: configs })
         }}
       >
-        Confirm
+        {i18n.t("confirm")}
       </Button>
     </div>
   )

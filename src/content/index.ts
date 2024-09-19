@@ -1,12 +1,13 @@
-import { xCookie } from "./cookie"
-import { isError } from "./utils"
+import { xCookie } from "../utils/cookie"
+import { isError } from "../utils"
 
-interface IWebsiteConfig {
+export interface IWebsiteConfig {
   fromDomain: string
   toDomain: string
   token: string
   storage: "localStorage" | "sessionStorage" | "cookie"
   field?: string
+  isNew?: boolean
 }
 
 function copy(websiteConfig: IWebsiteConfig, needFresh?: boolean) {
@@ -90,16 +91,10 @@ function init() {
             }
           }
           handledDomain[id] = token
+          websiteConfig.isNew = token !== websiteConfig.token
           websiteConfig.token = token
-          chrome.runtime.sendMessage({ websiteConfig })
         } else if (currentHref.includes(websiteConfig.toDomain)) {
-          copy(websiteConfig)
-          chrome.runtime.onMessage.addListener((content) => {
-            if (currentHref.includes(content.websiteConfig?.toDomain)) {
-              const needFresh = true
-              copy(content.websiteConfig, needFresh)
-            }
-          })
+          copy(websiteConfig, websiteConfig.isNew)
         }
       })
       chrome.storage.local.set({ websiteConfigs: websiteConfigs })
@@ -107,8 +102,8 @@ function init() {
   )
 }
 
-chrome.runtime.onMessage.addListener(({ type }) => {
-  if (type === "init") init()
+chrome.storage.onChanged.addListener(() => {
+  init()
 })
 
 init()
