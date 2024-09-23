@@ -1,21 +1,21 @@
-import { useState, useEffect } from "react"
-import "./style.css"
-import { Table, Input, Select, Switch, Button } from "antd"
-import { PlusCircleTwoTone, MinusCircleTwoTone } from "@ant-design/icons"
-import { copy, uuid } from "../utils"
-import i18n from "../i18n"
-import IconTip from "./components/IconTip"
+import { useState, useEffect } from 'react'
+import './style.css'
+import { Table, Input, Select, Switch, Button } from 'antd'
+import { PlusCircleTwoTone, MinusCircleTwoTone } from '@ant-design/icons'
+import { copy, uuid } from '../utils'
+import i18n from '../i18n'
+import IconTip from './components/IconTip'
 
 export default function App() {
   const storageOptions = [
-    { label: "Local Storage", value: "localStorage" },
-    { label: "Session Storage", value: "sessionStorage" },
-    { label: "Cookie", value: "cookie" },
+    { label: 'Local Storage', value: 'localStorage' },
+    { label: 'Session Storage', value: 'sessionStorage' },
+    { label: 'Cookie', value: 'cookie' },
   ]
   const [configs, setConfigs] = useState([{ status: true, id: uuid() }])
 
   const getConfigFromStorage = () => {
-    chrome.storage.local.get("websiteConfigs", (data) => {
+    chrome.storage.local.get('websiteConfigs', (data) => {
       if (data?.websiteConfigs) setConfigs(data.websiteConfigs)
     })
   }
@@ -40,21 +40,21 @@ export default function App() {
       configs.map((item, configIndex) => {
         if (configIndex === index) item[key] = value
         return item
-      })
+      }),
     )
   }
 
   const columns = [
     {
-      title: i18n.t("enabled"),
-      dataIndex: "status",
+      title: i18n.t('enabled'),
+      dataIndex: 'status',
       width: 100,
       render: (value, record, index) => {
         return (
           <Switch
             checked={value}
             onChange={(value) => {
-              changeField(index, "status", value)
+              changeField(index, 'status', value)
             }}
           />
         )
@@ -63,10 +63,10 @@ export default function App() {
     {
       title: (
         <>
-          {i18n.t("sourceSite")} <IconTip title={i18n.t("sourceSiteTip")} />
+          {i18n.t('sourceSite')} <IconTip title={i18n.t('sourceSiteTip')} />
         </>
       ),
-      dataIndex: "fromDomain",
+      dataIndex: 'fromDomain',
       render: (value, record, index) => {
         return (
           <>
@@ -74,7 +74,7 @@ export default function App() {
               value={value}
               placeholder="xxx.com"
               onChange={(e) => {
-                changeField(index, "fromDomain", e.target.value)
+                changeField(index, 'fromDomain', e.target.value)
               }}
             />
           </>
@@ -84,17 +84,17 @@ export default function App() {
     {
       title: (
         <>
-          {i18n.t("targetSite")} <IconTip title={i18n.t("targetSiteTip")} />
+          {i18n.t('targetSite')} <IconTip title={i18n.t('targetSiteTip')} />
         </>
       ),
-      dataIndex: "toDomain",
+      dataIndex: 'toDomain',
       render: (value, record, index) => {
         return (
           <Input
             value={value}
             placeholder="localhost:8080"
             onChange={(e) => {
-              changeField(index, "toDomain", e.target.value)
+              changeField(index, 'toDomain', e.target.value)
             }}
           />
         )
@@ -104,20 +104,20 @@ export default function App() {
       },
     },
     {
-      title: i18n.t("storage"),
+      title: i18n.t('storage'),
       width: 170,
-      dataIndex: "storage",
+      dataIndex: 'storage',
       render: (value, record, index) => {
         return (
           <Select
             allowClear
             value={value}
             options={storageOptions}
-            style={{ width: "100%" }}
+            style={{ width: '100%' }}
             onChange={(value) => {
-              changeField(index, "storage", value)
+              changeField(index, 'storage', value)
             }}
-            placeholder={i18n.t("storage")}
+            placeholder={i18n.t('storage')}
           />
         )
       },
@@ -125,18 +125,18 @@ export default function App() {
     {
       title: (
         <>
-          {i18n.t("storageField")}
-          <IconTip title={i18n.t("storageFieldTip")} />
+          {i18n.t('storageField')}
+          <IconTip title={i18n.t('storageFieldTip')} />
         </>
       ),
-      dataIndex: "field",
+      dataIndex: 'field',
       render: (value, record, index) => {
         return (
           <Input
             allowClear
             value={value}
             onChange={(e) => {
-              changeField(index, "field", e.target.value)
+              changeField(index, 'field', e.target.value)
             }}
             placeholder="token"
           />
@@ -146,19 +146,19 @@ export default function App() {
     {
       title: (
         <>
-          {i18n.t("storageValue")}
-          <IconTip title={i18n.t("storageValueTip")} />
+          {i18n.t('storageValue')}
+          <IconTip title={i18n.t('storageValueTip')} />
         </>
       ),
-      dataIndex: "token",
+      dataIndex: 'token',
       ellipsis: { showTitle: false },
       render: (text) => {
-        if (typeof text === "object") {
+        if (typeof text === 'object') {
           text = JSON.stringify(text)
         }
         return (
           <span
-            style={{ cursor: "pointer" }}
+            style={{ cursor: 'pointer' }}
             onClick={() => {
               copy(text)
             }}
@@ -169,12 +169,12 @@ export default function App() {
       },
     },
     {
-      title: i18n.t("operation"),
-      dataIndex: "operation",
+      title: i18n.t('operation'),
+      dataIndex: 'operation',
       width: 100,
       render: (value, record, index) => {
         return (
-          <div style={{ fontSize: "20px", textAlign: "center" }}>
+          <div style={{ fontSize: '20px', textAlign: 'center' }}>
             <PlusCircleTwoTone
               onClick={() => {
                 configs.splice(index, 0, { ...record, id: uuid() })
@@ -182,7 +182,7 @@ export default function App() {
               }}
             />
             <MinusCircleTwoTone
-              style={{ marginLeft: "8px" }}
+              style={{ marginLeft: '8px' }}
               onClick={() => {
                 removeConfig(index)
               }}
@@ -195,14 +195,7 @@ export default function App() {
 
   return (
     <div className="popup-container">
-      <Table
-        rowKey="id"
-        size="small"
-        bordered={false}
-        columns={columns}
-        dataSource={configs}
-        pagination={false}
-      />
+      <Table rowKey="id" size="small" bordered={false} columns={columns} dataSource={configs} pagination={false} />
       {/* <Alert
         style={{ marginTop: "10px" }}
         message={
@@ -217,12 +210,12 @@ export default function App() {
       /> */}
       <Button
         type="primary"
-        style={{ marginTop: "10px", textAlign: "center" }}
+        style={{ marginTop: '10px', textAlign: 'center' }}
         onClick={() => {
           chrome.storage.local.set({ websiteConfigs: configs })
         }}
       >
-        {i18n.t("confirm")}
+        {i18n.t('confirm')}
       </Button>
     </div>
   )
