@@ -89,7 +89,7 @@ const paste = (websiteConfig: IWebsiteConfig) => {
 }
 
 const init = () => {
-  chrome.storage.local.get(['websiteConfigs'], (data: { websiteConfigs?: IWebsiteConfig[] }) => {
+  chrome.storage.local.get('websiteConfigs', (data: { websiteConfigs?: IWebsiteConfig[] }) => {
     if (!data?.websiteConfigs) return
     const websiteConfigs = data.websiteConfigs
     const currentHref = location.href

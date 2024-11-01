@@ -1,4 +1,18 @@
-/* TO DO 恭喜发财、步步高升。生活不易，投喂随意。小彩蛋 */
-chrome.action.onClicked.addListener(() => {
-  chrome.tabs.create({ url: "../index.html", active: true })
+const POPUP_URL = chrome.runtime.getURL('../index.html')
+const POPUP_TAB_ID_KEY = 'popupTabId'
+
+chrome.action.onClicked.addListener((tab) => {
+  chrome.storage.local.get('POPUP_TAB_ID_KEY', (data: any) => {
+    chrome.tabs.query({}, (tabs) => {
+      let popupTab = tabs.find((tab) => tab.id === data.POPUP_TAB_ID_KEY)
+
+      if (popupTab) {
+        chrome.tabs.update(popupTab.id, { active: true })
+      } else {
+        chrome.tabs.create({ url: POPUP_URL, active: true }, (newTab) => {
+          chrome.storage.local.set({ POPUP_TAB_ID_KEY: newTab.id })
+        })
+      }
+    })
+  })
 })
