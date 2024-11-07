@@ -54,11 +54,11 @@ const paste = (websiteConfig: IWebsiteConfig) => {
     let isNotSame = false
     // 如果field存在则获取单个localStorage,如果不存在，则获取所有的localStorage
     if (websiteConfig.field) {
-      isNotSame = window[websiteConfig.storage].getItem(websiteConfig.field) !== token
+      isNotSame = window[websiteConfig.storage].getItem(websiteConfig.field) !== String(token)
       window[websiteConfig.storage].setItem(websiteConfig.field, token)
     } else {
       isNotSame = Object.keys(token).some((key) => {
-        return window[websiteConfig.storage].getItem(key) !== token[key]
+        return window[websiteConfig.storage].getItem(key) !== String(token[key])
       })
       Object.keys(token).forEach((key) => {
         window[websiteConfig.storage].setItem(key, token[key])
