@@ -245,7 +245,7 @@ export default function App() {
       <div style={{ textAlign: 'center' }}>
         <Button
           type="primary"
-          style={{ marginTop: '10px' }}
+          style={{ margin: '10px auto' }}
           onClick={() => {
             chrome.storage.local.set({ websiteConfigs: configs }, () => {
               message.success(i18n.t('saveSuccess'))
