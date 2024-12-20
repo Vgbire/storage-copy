@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import './style.css'
-import { Table, Input, Select, Switch, Button } from 'antd'
+import { Table, Input, Select, Switch, Button, Form, Radio, message } from 'antd'
 import { PlusCircleTwoTone, MinusCircleTwoTone } from '@ant-design/icons'
 import { copy, uuid } from '../utils'
 import i18n from '../i18n'
@@ -20,12 +20,27 @@ export default function App() {
     })
   }
 
+  // 是否弹窗打开popup页
+  const [openWay, setOpenWay] = useState('popup')
   useEffect(() => {
+    chrome.storage.local.get('openWay', (data) => {
+      setOpenWay(data.openWay || 'popup')
+    })
     getConfigFromStorage()
   }, [])
 
-  chrome.storage.onChanged.addListener(() => {
-    getConfigFromStorage()
+  chrome.storage.onChanged.addListener((data) => {
+    if (data.websiteConfigs) {
+      const newValue = data.websiteConfigs?.newValue
+      const oldValue = data.websiteConfigs?.oldValue
+      // 长度不一样要刷新token
+      if (newValue?.length !== oldValue?.length) {
+        getConfigFromStorage()
+        // 长度一样且token不一样要刷新token
+      } else if (newValue.some((item, index) => item.token !== oldValue[index].token)) {
+        getConfigFromStorage()
+      }
+    }
   })
 
   function removeConfig(index) {
@@ -194,7 +209,26 @@ export default function App() {
   ]
 
   return (
-    <div className="popup-container">
+    <div
+      style={{
+        width: openWay === 'popup' && 780,
+        height: openWay === 'popup' && 400,
+        padding: openWay === 'popup' ? 10 : 40,
+      }}
+    >
+      <Form.Item label={i18n.t('openWay')} style={{ marginBottom: 5 }}>
+        <Radio.Group
+          value={openWay}
+          options={[
+            { value: 'popup', label: i18n.t('popup') },
+            { value: 'tab', label: i18n.t('tab') },
+          ]}
+          onChange={(e) => {
+            chrome.storage.local.set({ openWay: e.target.value })
+            setOpenWay(e.target.value)
+          }}
+        />
+      </Form.Item>
       <Table rowKey="id" size="small" bordered={false} columns={columns} dataSource={configs} pagination={false} />
       {/* <Alert
         style={{ marginTop: "10px" }}
@@ -208,15 +242,19 @@ export default function App() {
         }
         type="warning"
       /> */}
-      <Button
-        type="primary"
-        style={{ marginTop: '10px', textAlign: 'center' }}
-        onClick={() => {
-          chrome.storage.local.set({ websiteConfigs: configs })
-        }}
-      >
-        {i18n.t('confirm')}
-      </Button>
+      <div style={{ textAlign: 'center' }}>
+        <Button
+          type="primary"
+          style={{ marginTop: '10px' }}
+          onClick={() => {
+            chrome.storage.local.set({ websiteConfigs: configs }, () => {
+              message.success(i18n.t('saveSuccess'))
+            })
+          }}
+        >
+          {i18n.t('save')}
+        </Button>
+      </div>
     </div>
   )
 }
