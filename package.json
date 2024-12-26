@@ -1,6 +1,6 @@
 {
   "name": "Storage Copy",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "description": "Copying Cookies, LocalStorage, SessionStorage from One Website to Another Website",
   "type": "module",
   "keywords": [

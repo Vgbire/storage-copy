@@ -7,6 +7,8 @@ import i18n from '../i18n'
 import IconTip from './components/IconTip'
 
 export default function App() {
+  const [form] = Form.useForm()
+
   const storageOptions = [
     { label: 'Local Storage', value: 'localStorage' },
     { label: 'Session Storage', value: 'sessionStorage' },
@@ -23,8 +25,10 @@ export default function App() {
   // 是否弹窗打开popup页
   const [openWay, setOpenWay] = useState('popup')
   useEffect(() => {
-    chrome.storage.local.get('openWay', (data) => {
-      setOpenWay(data.openWay || 'popup')
+    chrome.storage.local.get(['openWay', 'refresh'], (data) => {
+      const openWay = data?.openWay || 'popup'
+      setOpenWay(openWay)
+      form.setFieldsValue({ openWay, refresh: data.refresh || false })
     })
     getConfigFromStorage()
   }, [])
@@ -59,11 +63,11 @@ export default function App() {
     )
   }
 
-  const columns = [
+  const columns: any = [
     {
       title: i18n.t('enabled'),
       dataIndex: 'status',
-      width: 100,
+      width: openWay === 'popup' ? 80 : 100,
       render: (value, record, index) => {
         return (
           <Switch
@@ -120,7 +124,7 @@ export default function App() {
     },
     {
       title: i18n.t('storage'),
-      width: 170,
+      width: 180,
       dataIndex: 'storage',
       render: (value, record, index) => {
         return (
@@ -144,6 +148,7 @@ export default function App() {
           <IconTip title={i18n.t('storageFieldTip')} />
         </>
       ),
+      winth: openWay === 'popup' ? 80 : 150,
       dataIndex: 'field',
       render: (value, record, index) => {
         return (
@@ -167,6 +172,7 @@ export default function App() {
       ),
       dataIndex: 'token',
       ellipsis: { showTitle: false },
+      width: openWay === 'popup' ? 80 : 200,
       render: (text) => {
         if (typeof text === 'object') {
           text = JSON.stringify(text)
@@ -186,7 +192,8 @@ export default function App() {
     {
       title: i18n.t('operation'),
       dataIndex: 'operation',
-      width: 100,
+      align: 'center',
+      width: openWay === 'popup' ? 80 : 100,
       render: (value, record, index) => {
         return (
           <div style={{ fontSize: '20px', textAlign: 'center' }}>
@@ -216,19 +223,26 @@ export default function App() {
         padding: openWay === 'popup' ? 10 : 40,
       }}
     >
-      <Form.Item label={i18n.t('openWay')} style={{ marginBottom: 5 }}>
-        <Radio.Group
-          value={openWay}
-          options={[
-            { value: 'popup', label: i18n.t('popup') },
-            { value: 'tab', label: i18n.t('tab') },
-          ]}
-          onChange={(e) => {
-            chrome.storage.local.set({ openWay: e.target.value })
-            setOpenWay(e.target.value)
-          }}
-        />
-      </Form.Item>
+      <Form form={form} layout="inline">
+        {/*  是否弹窗打开popup页 */}
+        <Form.Item label={i18n.t('openWay')} name="openWay" style={{ marginBottom: 5 }}>
+          <Radio.Group
+            options={[
+              { value: 'popup', label: i18n.t('popup') },
+              { value: 'tab', label: i18n.t('tab') },
+            ]}
+          />
+        </Form.Item>
+        <Form.Item
+          label={i18n.t('autoRefresh')}
+          name="refresh"
+          style={{ marginBottom: 5 }}
+          valuePropName="checked"
+          tooltip={<div>{i18n.t('autoRefreshTip')}</div>}
+        >
+          <Switch></Switch>
+        </Form.Item>
+      </Form>
       <Table rowKey="id" size="small" bordered={false} columns={columns} dataSource={configs} pagination={false} />
       {/* <Alert
         style={{ marginTop: "10px" }}
@@ -247,7 +261,7 @@ export default function App() {
           type="primary"
           style={{ margin: '10px auto' }}
           onClick={() => {
-            chrome.storage.local.set({ websiteConfigs: configs }, () => {
+            chrome.storage.local.set({ websiteConfigs: configs, ...form.getFieldsValue() }, () => {
               message.success(i18n.t('saveSuccess'))
             })
           }}

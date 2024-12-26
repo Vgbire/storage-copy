@@ -13,7 +13,10 @@ const copy = (websiteConfig: IWebsiteConfig, handledDomain: any, websiteConfigs:
   const id = websiteConfig.fromDomain + websiteConfig.storage + websiteConfig.field
   // 跳过已经拿到token的域名
   if (handledDomain[id]) {
-    websiteConfig.token = handledDomain[id]
+    if (handledDomain[id] === websiteConfig.token) {
+      websiteConfig.token = handledDomain[id]
+      chrome.storage.local.set({ websiteConfigs: websiteConfigs })
+    }
     return
   }
 
@@ -47,7 +50,7 @@ const copy = (websiteConfig: IWebsiteConfig, handledDomain: any, websiteConfigs:
   }
 }
 
-const paste = (websiteConfig: IWebsiteConfig) => {
+const paste = (websiteConfig: IWebsiteConfig, refresh: boolean) => {
   const token = websiteConfig.token
 
   if (['sessionStorage', 'localStorage'].includes(websiteConfig.storage)) {
@@ -64,7 +67,7 @@ const paste = (websiteConfig: IWebsiteConfig) => {
         window[websiteConfig.storage].setItem(key, token[key])
       })
     }
-    if (isNotSame) window.location.reload()
+    if (isNotSame && refresh) window.location.reload()
   } else if (websiteConfig.storage === 'cookie') {
     let isNotSame = false
 
@@ -84,31 +87,37 @@ const paste = (websiteConfig: IWebsiteConfig) => {
         xCookie.set(item, xCookie.get(item), 9999999, '/', location.hostname)
       })
     }
-    if (isNotSame) window.location.reload()
+    if (isNotSame && refresh) window.location.reload()
   }
 }
 
 const init = () => {
-  chrome.storage.local.get('websiteConfigs', (data: { websiteConfigs?: IWebsiteConfig[] }) => {
-    if (!data?.websiteConfigs) return
-    const websiteConfigs = data.websiteConfigs
-    const currentHref = location.href
-    const handledDomain = {}
-    websiteConfigs.forEach((websiteConfig) => {
-      if (isError(websiteConfig)) {
-        return
-      }
-      if (currentHref.includes(websiteConfig.fromDomain)) {
-        copy(websiteConfig, handledDomain, websiteConfigs)
-      } else if (currentHref.includes(websiteConfig.toDomain)) {
-        paste(websiteConfig)
-      }
-    })
-  })
+  chrome.storage.local.get(
+    ['websiteConfigs', 'refresh'],
+    (data: { websiteConfigs?: IWebsiteConfig[]; refresh: boolean }) => {
+      if (!data?.websiteConfigs) return
+      const refresh = data.refresh
+      const websiteConfigs = data.websiteConfigs
+      const currentHref = location.href
+      const handledDomain = {}
+      websiteConfigs.forEach((websiteConfig) => {
+        if (isError(websiteConfig)) {
+          return
+        }
+        if (currentHref.includes(websiteConfig.fromDomain)) {
+          copy(websiteConfig, handledDomain, websiteConfigs)
+        } else if (currentHref.includes(websiteConfig.toDomain)) {
+          paste(websiteConfig, refresh)
+        }
+      })
+    },
+  )
 }
 
-chrome.storage.onChanged.addListener(() => {
-  init()
+chrome.storage.onChanged.addListener((data) => {
+  if (data.websiteConfigs || data.refresh) {
+    init()
+  }
 })
 
 init()

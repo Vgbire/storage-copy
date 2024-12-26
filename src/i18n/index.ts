@@ -33,6 +33,8 @@ i18n.init({
         popup: '弹窗',
         tab: '标签页',
         saveSuccess: '配置已生效！',
+        autoRefresh: '自动刷新',
+        autoRefreshTip: '当字段值发生变化时，目标网站是否自动刷新',
       },
     },
     en_US: {
@@ -54,6 +56,8 @@ i18n.init({
         popup: 'Popup',
         tab: 'Tab',
         saveSuccess: 'Configuration has taken effect!',
+        autoRefresh: 'Auto refresh',
+        autoRefreshTip: 'When Storage Value changed, the target website automatically refreshes ',
       },
     },
   },
