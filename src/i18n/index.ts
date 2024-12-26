@@ -16,7 +16,7 @@ i18n.init({
   resources: {
     zh_CN: {
       translation: {
-        enabled: '是否启用',
+        enabled: '启用状态',
         sourceSite: '源网站',
         sourceSiteTip: '从该网站复制存储数据',
         targetSite: '目标网站',
